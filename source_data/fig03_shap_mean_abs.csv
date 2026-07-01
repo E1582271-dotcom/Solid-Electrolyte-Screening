@@ -1,0 +1,49 @@
+feature,label,mean_abs_shap
+Family,Structural family,0.31643457118363916
+crystal_system,Crystal system,0.29076681616250094
+X_mean,Electronegativity (mean),0.2304115203250347
+X_std,Electronegativity (SD),0.2281093557290362
+n_elements,No. of elements,0.21841129176328933
+cell_volume,Cell volume,0.20817261849077162
+a,Lattice a,0.18576187630693866
+radius_std,Atomic radius (SD),0.17430152376385474
+spacegroup_no,Space-group no.,0.15473370770631786
+radius_mean,Atomic radius (mean),0.143668254222091
+c,Lattice c,0.13913011149528196
+Li_frac,Li fraction,0.13206629885451468
+group_mean,Group number (mean),0.11121936680575364
+b,Lattice b,0.10004123035423448
+mendeleev_std,Mendeleev number (SD),0.09159017276710961
+Z_mean,Atomic number (mean),0.0762984441272733
+group_std,Group number (SD),0.07571731355270543
+row_std,Periodic row (SD),0.0588848737617979
+row_mean,Periodic row (mean),0.051338750498732974
+mendeleev_mean,Mendeleev number (mean),0.04347496761880171
+mendeleev_max,Mendeleev number (max),0.04064663003329016
+mass_max,Atomic mass (max),0.03993777218206318
+radius_range,Atomic radius (range),0.03983819795305183
+mass_std,Atomic mass (SD),0.03465185427923494
+Z_std,Atomic number (SD),0.03366722792745617
+row_range,Periodic row (range),0.03018251216345277
+mass_mean,Atomic mass (mean),0.02916791819339409
+radius_max,Atomic radius (max),0.028750909800873335
+Z,Formula units (Z),0.02775462359016413
+Z_range,Atomic number (range),0.027268598686021217
+radius_min,Atomic radius (min),0.022391117796676414
+X_min,Electronegativity (min),0.02228156614034817
+Z_max,Atomic number (max),0.02086160170934494
+gamma,Angle γ,0.020811023462663166
+X_range,Electronegativity (range),0.01708333767230701
+mass_range,Atomic mass (range),0.016616209761527886
+row_max,Periodic row (max),0.015327253976797513
+beta,Angle β,0.015315631159038895
+X_max,Electronegativity (max),0.013778164302455244
+group_max,Group number (max),0.013688020633571569
+mendeleev_range,Mendeleev number (range),0.012334149889059459
+group_range,Group number (range),0.009325712491222816
+alpha,Angle α,0.000778822331065855
+mendeleev_min,Mendeleev number (min),0.00023259757162750905
+mass_min,Atomic mass (min),0.0
+Z_min,Atomic number (min),0.0
+group_min,Group number (min),0.0
+row_min,Periodic row (min),0.0
