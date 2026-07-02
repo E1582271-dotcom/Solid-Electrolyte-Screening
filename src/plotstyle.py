@@ -67,10 +67,8 @@ def apply_publication_style(font_size: int = FS_LABEL, axes_linewidth: float = 0
     plt.rcParams["pdf.fonttype"] = 42
     # Layout & style
     plt.rcParams["font.size"] = font_size
-    plt.rcParams["axes.spines.right"] = True   # full 4-sided box (match project 2)
-    plt.rcParams["axes.spines.top"] = True
-    plt.rcParams["xtick.top"] = True           # mirrored ticks on the closed box
-    plt.rcParams["ytick.right"] = True
+    plt.rcParams["axes.spines.right"] = True   # full 4-sided box (match project 2);
+    plt.rcParams["axes.spines.top"] = True     # ticks stay on bottom/left only
     plt.rcParams["axes.linewidth"] = axes_linewidth
     plt.rcParams["axes.labelsize"] = FS_LABEL
     plt.rcParams["axes.titlesize"] = FS_LABEL
