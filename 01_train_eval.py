@@ -14,7 +14,8 @@ Everything is in log10(S/cm) units. Run:
     .venv\\Scripts\\python.exe 01_train_eval.py
 """
 from __future__ import annotations
-import os, json, sys
+import argparse
+import os, json, math, sys
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -84,6 +85,37 @@ def cv_eval(name, build_fn, X, y, cat_cols, is_catboost):
     return agg
 
 
+def plot_eda(ally, top_fam):
+    """Figure 1: (a) target histogram, (b) median log10(sigma) by family. Panel b bars
+    are anchored at a floor below the worst family, not at 0 -- the medians are negative,
+    so 0-anchored bars would draw the WORST family as the longest bar."""
+    fig, ax = plt.subplots(1, 2, figsize=(ps.COL_DOUBLE_IN, 2.8))
+    ax[0].hist(ally, bins=30, color=ps.PALETTE["blue_main"], alpha=.9)
+    ax[0].set_xlabel("log$_{10}$ σ  (S cm$^{-1}$)"); ax[0].set_ylabel("Count")
+    floor = math.floor((top_fam.values.min() - 0.4) * 2) / 2
+    ax[1].barh(top_fam.index, top_fam.values - floor, left=floor,
+               color=ps.PALETTE["blue_main"])
+    for y, v in enumerate(top_fam.values):
+        ax[1].annotate(f"{v:.1f}", (v, y), textcoords="offset points", xytext=(3, 0),
+                       va="center", ha="left", fontsize=ps.FS_ANNOT,
+                       color=ps.PALETTE["neutral_mid"])
+    ax[1].set_xlim(floor, top_fam.values.max() + 0.75)
+    ax[1].set_xlabel("Median log$_{10}$ σ  (S cm$^{-1}$)")
+    ps.add_panel_label(ax[0], "a"); ps.add_panel_label(ax[1], "b", x=-0.02)
+    ps.finalize_figure(fig, os.path.join(FIG, "01_eda.png"))
+
+
+def replot_from_source_data():
+    """Redraw figures/01_eda.png from the shipped source_data CSVs -- no retraining,
+    so the model, metrics.json and every reported number stay byte-identical."""
+    ps.apply_publication_style()
+    ally = pd.read_csv(os.path.join(SRC, "fig01a_target_distribution.csv"))["log10_sigma"]
+    top_fam = pd.read_csv(os.path.join(SRC, "fig01b_family_median.csv"),
+                          index_col=0)["median_log10_sigma"]
+    plot_eda(ally, top_fam)
+    print("Replotted figures/01_eda.png from source_data/ (no retraining).")
+
+
 def main():
     ps.apply_publication_style()
     train, test = load_obelix(DATA)
@@ -124,15 +156,9 @@ def main():
     os.makedirs(SRC, exist_ok=True)
 
     # --- Figure 1: target distribution (EDA), panels a (histogram) + b (by family) ---
-    fig, ax = plt.subplots(1, 2, figsize=(ps.COL_DOUBLE_IN, 2.8))
     ally = pd.concat([train["y"], test["y"]])
-    ax[0].hist(ally, bins=30, color=ps.PALETTE["blue_main"], alpha=.9)
-    ax[0].set_xlabel("log$_{10}$ σ  (S cm$^{-1}$)"); ax[0].set_ylabel("Count")
     top_fam = train.groupby("Family")["y"].median().sort_values().iloc[-10:]
-    ax[1].barh(top_fam.index, top_fam.values, color=ps.PALETTE["blue_main"])
-    ax[1].set_xlabel("Median log$_{10}$ σ  (S cm$^{-1}$)")
-    ps.add_panel_label(ax[0], "a"); ps.add_panel_label(ax[1], "b", x=-0.02)
-    ps.finalize_figure(fig, os.path.join(FIG, "01_eda.png"))
+    plot_eda(ally, top_fam)
     ally.rename("log10_sigma").to_csv(
         os.path.join(SRC, "fig01a_target_distribution.csv"), index=False)
     top_fam.rename("median_log10_sigma").to_csv(
@@ -162,4 +188,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--replot", action="store_true",
+                    help="redraw figure 1 from source_data/ without retraining")
+    if ap.parse_args().replot:
+        replot_from_source_data()
+    else:
+        main()
