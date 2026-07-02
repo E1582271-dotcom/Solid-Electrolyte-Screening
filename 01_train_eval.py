@@ -102,7 +102,7 @@ def plot_eda(ally, top_fam):
     ax[1].set_xlim(floor, top_fam.values.max() + 0.75)
     ax[1].set_xlabel("Median log$_{10}$ σ  (S cm$^{-1}$)")
     ps.add_panel_label(ax[0], "a"); ps.add_panel_label(ax[1], "b", x=-0.02)
-    ps.finalize_figure(fig, os.path.join(FIG, "01_eda.png"))
+    ps.finalize_figure(fig, os.path.join(FIG, "01_eda.png"), w_pad=2.2)
 
 
 def plot_parity(y_true, y_pred, cens):

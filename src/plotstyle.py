@@ -93,10 +93,12 @@ def add_panel_label(ax, letter, x=-0.08, y=1.04, fontsize=FS_PANEL, color=None,
 
 
 def finalize_figure(fig, out_path: str, formats=("png",), dpi: int = 600,
-                    pad: float = 0.6, close: bool = True):
+                    pad: float = 0.6, w_pad: float = None, close: bool = True):
     """tight_layout + save to png (600 dpi raster). The out_path suffix is ignored -- one file
-    per entry in `formats` (add "svg"/"pdf" here for editable vector export). Returns paths."""
-    fig.tight_layout(pad=pad)
+    per entry in `formats` (add "svg"/"pdf" here for editable vector export). Returns paths.
+    ``w_pad`` (font-size multiples) adds horizontal breathing room between panels -- use for
+    multi-panel figures whose right panel has long y tick labels."""
+    fig.tight_layout(pad=pad, w_pad=w_pad)
     base = Path(out_path).with_suffix("")
     os.makedirs(base.parent, exist_ok=True)
     saved = []

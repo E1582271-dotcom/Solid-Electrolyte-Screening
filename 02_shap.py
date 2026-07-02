@@ -110,7 +110,7 @@ def main():
                  ha="center", va="bottom", fontsize=ps.FS_ANNOT, color=ps.PALETTE["neutral_mid"])
 
     ps.add_panel_label(axA, "a"); ps.add_panel_label(axB, "b", x=-0.02)
-    ps.finalize_figure(fig, os.path.join(FIG, "03_shap.png"))
+    ps.finalize_figure(fig, os.path.join(FIG, "03_shap.png"), w_pad=2.2)
 
     rank = np.argsort(mean_abs)[::-1]
     pd.DataFrame({"feature": [cols[i] for i in rank],
