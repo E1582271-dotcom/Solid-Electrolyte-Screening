@@ -154,7 +154,8 @@ def run_demo(model):
           "the bottom -- matching the SHAP family ranking in 02_shap.py.")
     out_csv = os.path.join(HERE, "screen_demo.csv")
     ranked.to_csv(out_csv, index=False)
-    _plot(ranked, "label", os.path.join(FIG, "04_screen_demo.png"))
+    _plot(ranked, "label", os.path.join(FIG, "04_screen_demo.png"),
+          family_colors=BLUE_FAMILY_COLORS)
     print(f"\nSaved: {os.path.relpath(out_csv, HERE)}, "
           "figures/04_screen_demo.png, source_data/fig04_screen_demo.csv")
     return ranked
@@ -258,8 +259,9 @@ def run_live(model, api_key, max_n, top_n):
     return ranked
 
 
-# monochrome blue ramp for the production leaderboard (fig 5): lightness encodes the
-# family tier (LGPS darkest -> unknown lightest), so the whole figure reads in one hue
+# monochrome blue ramp for the screening figures (figs 4/5): lightness encodes the
+# family tier (LGPS darkest -> unknown lightest), so both figures read in one hue;
+# a lightness ramp also survives grayscale printing better than five distinct hues
 BLUE_FAMILY_COLORS = {
     "LGPS": "#0F4D92",
     "argyrodites": "#2E6DB4",
