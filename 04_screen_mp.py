@@ -252,7 +252,8 @@ def run_live(model, api_key, max_n, top_n):
           "heuristic (see header); novel chemistries score on composition + "
           "structure only. Validate the head of this list with Project 2 MD.")
     _plot(ranked.head(min(top_n, 20)), "formula",
-          os.path.join(FIG, "05_screen_mp.png"), highlight=AUDITED_LEADS)
+          os.path.join(FIG, "05_screen_mp.png"), highlight=AUDITED_LEADS,
+          family_colors=BLUE_FAMILY_COLORS, fade=False)
     print(f"\nSaved: {os.path.relpath(out_csv, HERE)} ({len(ranked)} rows), "
           "figures/05_screen_mp.png, source_data/fig05_screen_mp.csv")
     return ranked
@@ -261,6 +262,17 @@ def run_live(model, api_key, max_n, top_n):
 # the two literature-blank candidates that survived the screen_audit.md pass;
 # they are the hand-off to Project 2 MD and get visual priority in the figure
 AUDITED_LEADS = frozenset({"Li20Si3P3S23Cl", "Li8TiS6"})
+
+# monochrome blue ramp for the production leaderboard (fig 5): lightness encodes the
+# family tier (LGPS darkest -> unknown lightest), so the whole figure reads in one hue;
+# leads are marked by a black edge + bold label instead of a second colour
+BLUE_FAMILY_COLORS = {
+    "LGPS": "#0F4D92",
+    "argyrodites": "#2E6DB4",
+    "thio-LISICON": "#5B92CC",
+    "sulfides": "#8FB8E0",
+    "unknown": "#BCD4EA",
+}
 
 
 # --------------------------------------------------------------------------- #
@@ -271,7 +283,7 @@ def _lighten(hex_color, amount=0.62):
     return f"#{mix(r):02X}{mix(g):02X}{mix(b):02X}"
 
 
-def _plot(ranked, label_col, path, highlight=frozenset()):
+def _plot(ranked, label_col, path, highlight=frozenset(), family_colors=None, fade=True):
     # dedupe by composition (keep best-ranked polymorph) so distinct formulas
     # show; use numeric y-positions so repeated labels don't collapse onto one row
     uniq = ranked.drop_duplicates(subset="formula", keep="first")
@@ -282,16 +294,22 @@ def _plot(ranked, label_col, path, highlight=frozenset()):
     # (ink says the opposite of the ranking). With the floor, longer = better.
     floor = math.floor((vals.min() - 0.4) * 2) / 2
     is_lead = top["formula"].isin(highlight)
-    fam_col = [FAMILY_COLORS.get(f, FAMILY_COLORS["unknown"]) for f in top["Family"]]
-    if highlight:
+    fam_map = family_colors or FAMILY_COLORS
+    fam_col = [fam_map.get(f, fam_map["unknown"]) for f in top["Family"]]
+    if highlight and fade:
         # visual hierarchy: audited leads keep the full family colour, everything
         # else fades to a light fill with a family-coloured edge
         fills = [c if lead else _lighten(c) for c, lead in zip(fam_col, is_lead)]
+        edges, lws = fam_col, 0.7
     else:
+        # monochrome ramp: fills already encode the family tier, so leads are
+        # marked by a black edge instead of fading the rest
         fills = fam_col
+        edges = [ps.PALETTE["neutral_black"] if lead else "white" for lead in is_lead]
+        lws = [1.1 if lead else 0.5 for lead in is_lead]
     ypos = list(range(len(top)))
     fig, ax = plt.subplots(figsize=(ps.COL_DOUBLE_IN, max(3.0, 0.32 * len(top))))
-    ax.barh(ypos, vals - floor, left=floor, color=fills, edgecolor=fam_col, linewidth=0.7)
+    ax.barh(ypos, vals - floor, left=floor, color=fills, edgecolor=edges, linewidth=lws)
     for y, v, lead in zip(ypos, vals, is_lead):
         ax.annotate(f"{v:.1f}" + ("  • lead" if lead else ""), (v, y),
                     textcoords="offset points", xytext=(3, 0), va="center", ha="left",
@@ -306,10 +324,10 @@ def _plot(ranked, label_col, path, highlight=frozenset()):
     ax.set_xlim(floor, vals.max() + 1.1)          # headroom for the value labels
     ax.set_xlabel("Predicted log$_{10}$ σ  (S cm$^{-1}$)")
     # legend: only families present in this figure, placed to the right of the axes
-    present = [f for f in FAMILY_COLORS if f in set(top["Family"])]
+    present = [f for f in fam_map if f in set(top["Family"])]
     handles = [plt.Rectangle((0, 0), 1, 1,
-                             facecolor=(FAMILY_COLORS[f] if not highlight else _lighten(FAMILY_COLORS[f])),
-                             edgecolor=FAMILY_COLORS[f], linewidth=0.7) for f in present]
+                             facecolor=(_lighten(fam_map[f]) if (highlight and fade) else fam_map[f]),
+                             edgecolor=fam_map[f], linewidth=0.7) for f in present]
     ax.legend(handles, present, title="Family (heuristic)", loc="upper left",
               bbox_to_anchor=(1.02, 1.0), fontsize=ps.FS_LEGEND, title_fontsize=ps.FS_LEGEND)
     # source data (rank order, best first)
@@ -337,7 +355,8 @@ def main():
             sys.exit("screen_mp_results.csv not found -- run a live screen first.")
         ranked = pd.read_csv(csv)
         _plot(ranked.head(min(args.top, 20)), "formula",
-              os.path.join(FIG, "05_screen_mp.png"), highlight=AUDITED_LEADS)
+              os.path.join(FIG, "05_screen_mp.png"), highlight=AUDITED_LEADS,
+              family_colors=BLUE_FAMILY_COLORS, fade=False)
         print("Replotted figures/05_screen_mp.png from screen_mp_results.csv "
               f"({len(ranked)} rows, data unchanged).")
         return
