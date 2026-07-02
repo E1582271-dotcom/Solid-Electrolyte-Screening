@@ -252,20 +252,14 @@ def run_live(model, api_key, max_n, top_n):
           "heuristic (see header); novel chemistries score on composition + "
           "structure only. Validate the head of this list with Project 2 MD.")
     _plot(ranked.head(min(top_n, 20)), "formula",
-          os.path.join(FIG, "05_screen_mp.png"), highlight=AUDITED_LEADS,
-          family_colors=BLUE_FAMILY_COLORS, fade=False)
+          os.path.join(FIG, "05_screen_mp.png"), family_colors=BLUE_FAMILY_COLORS)
     print(f"\nSaved: {os.path.relpath(out_csv, HERE)} ({len(ranked)} rows), "
           "figures/05_screen_mp.png, source_data/fig05_screen_mp.csv")
     return ranked
 
 
-# the two literature-blank candidates that survived the screen_audit.md pass;
-# they are the hand-off to Project 2 MD and get visual priority in the figure
-AUDITED_LEADS = frozenset({"Li20Si3P3S23Cl", "Li8TiS6"})
-
 # monochrome blue ramp for the production leaderboard (fig 5): lightness encodes the
-# family tier (LGPS darkest -> unknown lightest), so the whole figure reads in one hue;
-# leads are marked by a black edge + bold label instead of a second colour
+# family tier (LGPS darkest -> unknown lightest), so the whole figure reads in one hue
 BLUE_FAMILY_COLORS = {
     "LGPS": "#0F4D92",
     "argyrodites": "#2E6DB4",
@@ -355,8 +349,7 @@ def main():
             sys.exit("screen_mp_results.csv not found -- run a live screen first.")
         ranked = pd.read_csv(csv)
         _plot(ranked.head(min(args.top, 20)), "formula",
-              os.path.join(FIG, "05_screen_mp.png"), highlight=AUDITED_LEADS,
-              family_colors=BLUE_FAMILY_COLORS, fade=False)
+              os.path.join(FIG, "05_screen_mp.png"), family_colors=BLUE_FAMILY_COLORS)
         print("Replotted figures/05_screen_mp.png from screen_mp_results.csv "
               f"({len(ranked)} rows, data unchanged).")
         return
