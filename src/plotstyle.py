@@ -3,7 +3,7 @@ Nature-family figure styling for Project 1 plots (shared by 01_train_eval.py,
 02_shap.py, 04_screen_mp.py).
 
 Palette + rcParams adapted from the `nature-figure` skill: restrained publication
-palette, Arial sans-serif, top/right spines off, frameless legends, and editable-text
+palette, Arial sans-serif, full 4-sided axes box, frameless legends, and editable-text
 SVG export (svg.fonttype='none'). Import-only; call apply_publication_style() once
 before creating figures, and finalize_figure() to save 600 dpi PNG (add "svg"/"pdf" to its
 `formats` for editable vector export).
@@ -67,8 +67,10 @@ def apply_publication_style(font_size: int = FS_LABEL, axes_linewidth: float = 0
     plt.rcParams["pdf.fonttype"] = 42
     # Layout & style
     plt.rcParams["font.size"] = font_size
-    plt.rcParams["axes.spines.right"] = False
-    plt.rcParams["axes.spines.top"] = False
+    plt.rcParams["axes.spines.right"] = True   # full 4-sided box (match project 2)
+    plt.rcParams["axes.spines.top"] = True
+    plt.rcParams["xtick.top"] = True           # mirrored ticks on the closed box
+    plt.rcParams["ytick.right"] = True
     plt.rcParams["axes.linewidth"] = axes_linewidth
     plt.rcParams["axes.labelsize"] = FS_LABEL
     plt.rcParams["axes.titlesize"] = FS_LABEL

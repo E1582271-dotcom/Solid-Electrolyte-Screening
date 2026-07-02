@@ -317,13 +317,14 @@ def _plot(ranked, label_col, path, highlight=frozenset(), family_colors=None, fa
     ax.set_ylim(-0.6, len(top) - 0.4)
     ax.set_xlim(floor, vals.max() + 1.1)          # headroom for the value labels
     ax.set_xlabel("Predicted log$_{10}$ σ  (S cm$^{-1}$)")
-    # legend: only families present in this figure, placed to the right of the axes
+    # legend: only families present in this figure, INSIDE the axes box (lower right
+    # is empty by construction: the worst-ranked rows have the shortest bars)
     present = [f for f in fam_map if f in set(top["Family"])]
     handles = [plt.Rectangle((0, 0), 1, 1,
                              facecolor=(_lighten(fam_map[f]) if (highlight and fade) else fam_map[f]),
                              edgecolor=fam_map[f], linewidth=0.7) for f in present]
-    ax.legend(handles, present, title="Family (heuristic)", loc="upper left",
-              bbox_to_anchor=(1.02, 1.0), fontsize=ps.FS_LEGEND, title_fontsize=ps.FS_LEGEND)
+    ax.legend(handles, present, title="Family (heuristic)", loc="lower right",
+              fontsize=ps.FS_LEGEND, title_fontsize=ps.FS_LEGEND)
     # source data (rank order, best first)
     os.makedirs(SRC, exist_ok=True)
     base = os.path.splitext(os.path.basename(path))[0]

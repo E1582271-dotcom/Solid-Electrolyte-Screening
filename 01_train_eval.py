@@ -105,15 +105,39 @@ def plot_eda(ally, top_fam):
     ps.finalize_figure(fig, os.path.join(FIG, "01_eda.png"))
 
 
+def plot_parity(y_true, y_pred, cens):
+    """Figure 2: held-out-test parity, censored labels drawn distinctly. MAE/R2 are
+    recomputed from the arrays, so a replot can never disagree with its own points."""
+    m = metrics(y_true, y_pred)
+    fig, ax = plt.subplots(figsize=(ps.COL_SINGLE_IN, 3.3))
+    lo, hi = y_true.min() - .5, y_true.max() + .5
+    ax.plot([lo, hi], [lo, hi], "--", lw=0.8, color=ps.PALETTE["neutral_dark"], zorder=1)
+    ax.scatter(y_true[~cens], y_pred[~cens], s=14, alpha=.75, linewidths=0,
+               color=ps.PALETTE["blue_main"], label="measured", zorder=3)
+    ax.scatter(y_true[cens], y_pred[cens], s=18, facecolors="none", linewidths=0.7,
+               edgecolors=ps.PALETTE["neutral_mid"], label="censored (< bound)", zorder=2)
+    ax.set_xlabel("True log$_{10}$ σ  (S cm$^{-1}$)")
+    ax.set_ylabel("Predicted log$_{10}$ σ  (S cm$^{-1}$)")
+    ax.annotate(f"CatBoost\nMAE {m['MAE']:.2f},  R$^2$ {m['R2']:.2f}",
+                xy=(0.04, 0.96), xycoords="axes fraction", va="top", ha="left",
+                fontsize=ps.FS_ANNOT)
+    ax.legend(loc="lower right", fontsize=ps.FS_LEGEND)
+    ps.finalize_figure(fig, os.path.join(FIG, "02_parity_test.png"))
+
+
 def replot_from_source_data():
-    """Redraw figures/01_eda.png from the shipped source_data CSVs -- no retraining,
+    """Redraw figures 1 + 2 from the shipped source_data CSVs -- no retraining,
     so the model, metrics.json and every reported number stay byte-identical."""
     ps.apply_publication_style()
     ally = pd.read_csv(os.path.join(SRC, "fig01a_target_distribution.csv"))["log10_sigma"]
     top_fam = pd.read_csv(os.path.join(SRC, "fig01b_family_median.csv"),
                           index_col=0)["median_log10_sigma"]
     plot_eda(ally, top_fam)
-    print("Replotted figures/01_eda.png from source_data/ (no retraining).")
+    par = pd.read_csv(os.path.join(SRC, "fig02_parity.csv"))
+    plot_parity(par["true_log10_sigma"].to_numpy(), par["pred_log10_sigma"].to_numpy(),
+                par["censored"].to_numpy().astype(bool))
+    print("Replotted figures/01_eda.png + 02_parity_test.png from source_data/ "
+          "(no retraining).")
 
 
 def main():
@@ -165,21 +189,8 @@ def main():
         os.path.join(SRC, "fig01b_family_median.csv"))
 
     # --- Figure 2: parity (held-out test); censored labels drawn distinctly ---
-    fig, ax = plt.subplots(figsize=(ps.COL_SINGLE_IN, 3.3))
-    lo, hi = y_te.min() - .5, y_te.max() + .5
-    ax.plot([lo, hi], [lo, hi], "--", lw=0.8, color=ps.PALETTE["neutral_dark"], zorder=1)
-    cens = test["censored"].to_numpy().astype(bool)
-    ax.scatter(y_te[~cens], pred_cat[~cens], s=14, alpha=.75, linewidths=0,
-               color=ps.PALETTE["blue_main"], label="measured", zorder=3)
-    ax.scatter(y_te[cens], pred_cat[cens], s=18, facecolors="none", linewidths=0.7,
-               edgecolors=ps.PALETTE["neutral_mid"], label="censored (< bound)", zorder=2)
-    ax.set_xlabel("True log$_{10}$ σ  (S cm$^{-1}$)")
-    ax.set_ylabel("Predicted log$_{10}$ σ  (S cm$^{-1}$)")
-    ax.annotate(f"CatBoost\nMAE {test_cat['MAE']:.2f},  R$^2$ {test_cat['R2']:.2f}",
-                xy=(0.04, 0.96), xycoords="axes fraction", va="top", ha="left",
-                fontsize=ps.FS_ANNOT)
-    ax.legend(loc="lower right", fontsize=ps.FS_LEGEND)
-    ps.finalize_figure(fig, os.path.join(FIG, "02_parity_test.png"))
+    plot_parity(y_te.to_numpy(), np.asarray(pred_cat),
+                test["censored"].to_numpy().astype(bool))
     pd.DataFrame({"true_log10_sigma": y_te.to_numpy(), "pred_log10_sigma": pred_cat,
                   "censored": test["censored"].to_numpy()}).to_csv(
         os.path.join(SRC, "fig02_parity.csv"), index=False)
