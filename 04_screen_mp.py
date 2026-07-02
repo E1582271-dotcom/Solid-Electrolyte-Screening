@@ -155,7 +155,7 @@ def run_demo(model):
     out_csv = os.path.join(HERE, "screen_demo.csv")
     ranked.to_csv(out_csv, index=False)
     _plot(ranked, "label", os.path.join(FIG, "04_screen_demo.png"),
-          family_colors=BLUE_FAMILY_COLORS)
+          family_colors=DEMO_FAMILY_COLORS)
     print(f"\nSaved: {os.path.relpath(out_csv, HERE)}, "
           "figures/04_screen_demo.png, source_data/fig04_screen_demo.csv")
     return ranked
@@ -269,6 +269,10 @@ BLUE_FAMILY_COLORS = {
     "sulfides": "#8FB8E0",
     "unknown": "#BCD4EA",
 }
+
+# fig 4 variant: named families keep the blue ramp, but 'unknown' drops out of the
+# hue entirely -- gray reads as "no family assigned", not "lowest tier"
+DEMO_FAMILY_COLORS = {**BLUE_FAMILY_COLORS, "unknown": "#C9C8C4"}
 
 
 # --------------------------------------------------------------------------- #
