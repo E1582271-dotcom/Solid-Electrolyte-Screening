@@ -30,7 +30,7 @@ Run:
     .venv\\Scripts\\python.exe 04_screen_mp.py --api-key <KEY> --max 400 --top 25
 """
 from __future__ import annotations
-import os, sys, re, argparse
+import os, sys, re, math, argparse
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -252,29 +252,64 @@ def run_live(model, api_key, max_n, top_n):
           "heuristic (see header); novel chemistries score on composition + "
           "structure only. Validate the head of this list with Project 2 MD.")
     _plot(ranked.head(min(top_n, 20)), "formula",
-          os.path.join(FIG, "05_screen_mp.png"))
+          os.path.join(FIG, "05_screen_mp.png"), highlight=AUDITED_LEADS)
     print(f"\nSaved: {os.path.relpath(out_csv, HERE)} ({len(ranked)} rows), "
           "figures/05_screen_mp.png, source_data/fig05_screen_mp.csv")
     return ranked
 
 
+# the two literature-blank candidates that survived the screen_audit.md pass;
+# they are the hand-off to Project 2 MD and get visual priority in the figure
+AUDITED_LEADS = frozenset({"Li20Si3P3S23Cl", "Li8TiS6"})
+
+
 # --------------------------------------------------------------------------- #
-def _plot(ranked, label_col, path):
+def _lighten(hex_color, amount=0.62):
+    """Blend a hex colour toward white (0 = unchanged, 1 = white)."""
+    r, g, b = (int(hex_color[i:i + 2], 16) for i in (1, 3, 5))
+    mix = lambda c: int(round(c + (255 - c) * amount))
+    return f"#{mix(r):02X}{mix(g):02X}{mix(b):02X}"
+
+
+def _plot(ranked, label_col, path, highlight=frozenset()):
     # dedupe by composition (keep best-ranked polymorph) so distinct formulas
     # show; use numeric y-positions so repeated labels don't collapse onto one row
     uniq = ranked.drop_duplicates(subset="formula", keep="first")
     top = uniq.head(20).iloc[::-1].reset_index(drop=True)
-    colors = [FAMILY_COLORS.get(f, FAMILY_COLORS["unknown"]) for f in top["Family"]]
+    vals = top["pred_log10_sigma"].astype(float)
+    # bars are anchored at a floor BELOW the worst value, not at 0: log sigma is
+    # negative, so 0-anchored bars make the worst conductor the longest bar
+    # (ink says the opposite of the ranking). With the floor, longer = better.
+    floor = math.floor((vals.min() - 0.4) * 2) / 2
+    is_lead = top["formula"].isin(highlight)
+    fam_col = [FAMILY_COLORS.get(f, FAMILY_COLORS["unknown"]) for f in top["Family"]]
+    if highlight:
+        # visual hierarchy: audited leads keep the full family colour, everything
+        # else fades to a light fill with a family-coloured edge
+        fills = [c if lead else _lighten(c) for c, lead in zip(fam_col, is_lead)]
+    else:
+        fills = fam_col
     ypos = list(range(len(top)))
     fig, ax = plt.subplots(figsize=(ps.COL_DOUBLE_IN, max(3.0, 0.32 * len(top))))
-    ax.barh(ypos, top["pred_log10_sigma"], color=colors)
+    ax.barh(ypos, vals - floor, left=floor, color=fills, edgecolor=fam_col, linewidth=0.7)
+    for y, v, lead in zip(ypos, vals, is_lead):
+        ax.annotate(f"{v:.1f}" + ("  • lead" if lead else ""), (v, y),
+                    textcoords="offset points", xytext=(3, 0), va="center", ha="left",
+                    fontsize=ps.FS_ANNOT, fontweight="bold" if lead else "normal",
+                    color=ps.PALETTE["neutral_black"] if lead else ps.PALETTE["neutral_mid"])
     ax.set_yticks(ypos)
     ax.set_yticklabels([subscript_formula(s) for s in top[label_col].astype(str)])
+    for tick, lead in zip(ax.get_yticklabels(), is_lead):
+        if lead:
+            tick.set_fontweight("bold")
     ax.set_ylim(-0.6, len(top) - 0.4)
+    ax.set_xlim(floor, vals.max() + 1.1)          # headroom for the value labels
     ax.set_xlabel("Predicted log$_{10}$ σ  (S cm$^{-1}$)")
     # legend: only families present in this figure, placed to the right of the axes
     present = [f for f in FAMILY_COLORS if f in set(top["Family"])]
-    handles = [plt.Rectangle((0, 0), 1, 1, color=FAMILY_COLORS[f]) for f in present]
+    handles = [plt.Rectangle((0, 0), 1, 1,
+                             facecolor=(FAMILY_COLORS[f] if not highlight else _lighten(FAMILY_COLORS[f])),
+                             edgecolor=FAMILY_COLORS[f], linewidth=0.7) for f in present]
     ax.legend(handles, present, title="Family (heuristic)", loc="upper left",
               bbox_to_anchor=(1.02, 1.0), fontsize=ps.FS_LEGEND, title_fontsize=ps.FS_LEGEND)
     # source data (rank order, best first)
@@ -292,7 +327,20 @@ def main():
     ap.add_argument("--api-key", default=None, help="Materials Project API key")
     ap.add_argument("--max", type=int, default=400, help="max MP entries to featurize")
     ap.add_argument("--top", type=int, default=25, help="rows to print")
+    ap.add_argument("--replot", action="store_true", help="redraw figures/05_screen_mp.png "
+                    "from the shipped screen_mp_results.csv (no MP query, no key)")
     args = ap.parse_args()
+
+    if args.replot:
+        csv = os.path.join(HERE, "screen_mp_results.csv")
+        if not os.path.exists(csv):
+            sys.exit("screen_mp_results.csv not found -- run a live screen first.")
+        ranked = pd.read_csv(csv)
+        _plot(ranked.head(min(args.top, 20)), "formula",
+              os.path.join(FIG, "05_screen_mp.png"), highlight=AUDITED_LEADS)
+        print("Replotted figures/05_screen_mp.png from screen_mp_results.csv "
+              f"({len(ranked)} rows, data unchanged).")
+        return
 
     model_path = os.path.join(HERE, "catboost_model.cbm")
     if not os.path.exists(model_path):
