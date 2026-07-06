@@ -9,6 +9,16 @@ before creating figures, and finalize_figure() to save 600 dpi PNG (add "svg"/"p
 `formats` for editable vector export).
 
 Self-contained on purpose: this repo ships standalone, so it does not import Project 2.
+
+=============================================================================
+AI4SSB SHARED PLOTSTYLE -- CORE (byte-identical across all 3 portfolio repos)
+Canonical source: project2_mlip_md/src/plotstyle.py
+This file is a physical copy (not an import -- each repo must stay independently
+cloneable/runnable). CORE_VERSION = "1.0.0"   Last synced: 2026-07-05
+Everything from here down to "END CORE" must stay byte-identical across all
+three copies. If you change any of it, edit the canonical source first, then
+bump CORE_VERSION + the sync date in all three repos in the same sitting.
+=============================================================================
 """
 from __future__ import annotations
 
@@ -17,7 +27,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-# ── Nature-family palette ─────────────────────────────────────────────────────
+# ── Nature-family palette (from nature-figure/references/api.md) ──────────────
 PALETTE = {
     "blue_main": "#0F4D92",
     "blue_secondary": "#3775BA",
@@ -30,16 +40,6 @@ PALETTE = {
     "neutral_mid": "#767676",
     "neutral_dark": "#4D4D4D",
     "neutral_black": "#272727",
-}
-
-# CVD-safe qualitative palette (Okabe-Ito) for the screening families, so the
-# categories stay distinguishable for colour-blind readers and in grayscale.
-FAMILY_COLORS = {
-    "argyrodites": "#0072B2",    # blue
-    "LGPS": "#E69F00",           # orange
-    "thio-LISICON": "#009E73",   # green
-    "sulfides": "#56B4E9",       # sky
-    "unknown": "#999999",        # gray
 }
 
 # ── Nature journal-final geometry (inches) & font sizes (pt at final print size) ──
@@ -67,8 +67,8 @@ def apply_publication_style(font_size: int = FS_LABEL, axes_linewidth: float = 0
     plt.rcParams["pdf.fonttype"] = 42
     # Layout & style
     plt.rcParams["font.size"] = font_size
-    plt.rcParams["axes.spines.right"] = True   # full 4-sided box (match project 2);
-    plt.rcParams["axes.spines.top"] = True     # ticks stay on bottom/left only
+    plt.rcParams["axes.spines.right"] = True   # full 4-sided box (materials/physics convention)
+    plt.rcParams["axes.spines.top"] = True
     plt.rcParams["axes.linewidth"] = axes_linewidth
     plt.rcParams["axes.labelsize"] = FS_LABEL
     plt.rcParams["axes.titlesize"] = FS_LABEL
@@ -87,15 +87,18 @@ def apply_publication_style(font_size: int = FS_LABEL, axes_linewidth: float = 0
 
 def add_panel_label(ax, letter, x=-0.08, y=1.04, fontsize=FS_PANEL, color=None,
                     fontweight="bold"):
-    """Bold lowercase panel letter near an axes' top-left corner (Nature convention)."""
+    """Bold lowercase panel letter near an axes' top-left corner (Nature convention).
+    Pattern from the nature-figure skill (references/api.md)."""
     ax.text(x, y, letter, transform=ax.transAxes, fontsize=fontsize, fontweight=fontweight,
             color=color or PALETTE["neutral_black"], ha="left", va="bottom")
 
 
 def finalize_figure(fig, out_path: str, formats=("png",), dpi: int = 600,
                     pad: float = 0.6, w_pad: float = None, close: bool = True):
-    """tight_layout + save to png (600 dpi raster). The out_path suffix is ignored -- one file
-    per entry in `formats` (add "svg"/"pdf" here for editable vector export). Returns paths.
+    """tight_layout + save. Default = png only (600 dpi) to keep the repo light. For submission,
+    regenerate the editable vector bundle with formats=("png","svg","pdf"): svg.fonttype='none' and
+    pdf.fonttype=42 (set in apply_publication_style) keep the text selectable.
+    The out_path suffix is ignored -- one file per entry in `formats`. Returns the saved paths.
     ``w_pad`` (font-size multiples) adds horizontal breathing room between panels -- use for
     multi-panel figures whose right panel has long y tick labels."""
     fig.tight_layout(pad=pad, w_pad=w_pad)
@@ -109,3 +112,37 @@ def finalize_figure(fig, out_path: str, formats=("png",), dpi: int = 600,
     if close:
         plt.close(fig)
     return saved
+
+
+def save_source_data(fig_path: str, columns, rows, subdir: str = "source_data"):
+    """Write a figure's source data next to figures/, named after the figure — the
+    provenance CSV projects 1 & 3 pair with every quantitative panel.
+    figures/03_arrhenius_prod.png -> source_data/03_arrhenius_prod.csv"""
+    import csv
+    base = Path(fig_path)
+    stem = base.with_suffix("").name
+    out_dir = (base.parent.parent if base.parent.name == "figures" else base.parent) / subdir
+    os.makedirs(out_dir, exist_ok=True)
+    out = out_dir / f"{stem}.csv"
+    with open(out, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(columns)
+        w.writerows(rows)
+    return str(out)
+
+
+# =============================================================================
+# END CORE -- everything below is this repo's own semantic palette layer.
+# Free to diverge from project2_mlip_md / project3_generative; does not need
+# to match the other two repos.
+# =============================================================================
+
+# CVD-safe qualitative palette (Okabe-Ito) for the screening families, so the
+# categories stay distinguishable for colour-blind readers and in grayscale.
+FAMILY_COLORS = {
+    "argyrodites": "#0072B2",    # blue
+    "LGPS": "#E69F00",           # orange
+    "thio-LISICON": "#009E73",   # green
+    "sulfides": "#56B4E9",       # sky
+    "unknown": "#999999",        # gray
+}

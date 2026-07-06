@@ -1,0 +1,16 @@
+material_id,formula,category,kept
+mp-696128,Li10Ge(PS6)2,true_positive_kept,True
+mp-696129,Li10Si(PS6)2,true_positive_kept,True
+mp-696123,Li10Sn(PS6)2,true_positive_kept,True
+mp-696138,Li10Ge(PS6)2 (P1),true_positive_kept,True
+mp-720509,Li10Si(PS6)2 (P1),true_positive_kept,True
+mp-1040451,Li20Si3P3S23Cl,novel_lead_kept,True
+mp-753546,Li8TiS6,novel_lead_kept,True
+mp-756490,Li6MnS4,novel_redox_dropped,False
+mp-1153,Li2S,fp_binary_dropped,False
+mp-769032,Li3NbS4,fp_redox_cathode_dropped,False
+mp-753974,Li8CrS6,fp_redox_cathode_dropped,False
+mp-766506,Li3CuS2,fp_redox_cathode_dropped,False
+mp-777963,Li3SbS4*9H2O,artifact_H_dropped,False
+mp-740717,Li(NH4)SO4,artifact_H_dropped,False
+mp-760046,LiPH21S3N7,artifact_H_dropped,False
