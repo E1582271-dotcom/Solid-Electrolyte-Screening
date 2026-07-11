@@ -142,10 +142,10 @@ primitive cells the funnel originally saw):
 
 | lead | prior rank | ensemble spread (pool percentile) | MD verdict |
 |---|---|---|---|
-| Li₂₀Si₃P₃S₂₃Cl | 1 | 22 % | ✅ 30.2 mS/cm |
-| Li₈TiS₆ | 2 | **72 %** | ❌ falsified |
-| Li₃PS₄ (gen016) | 3 | 27 % | ❌ ~1e-4 mS/cm |
-| LiPS₃ (gen021) | 4 (last) | **7 %** | ✅ 10.2 mS/cm |
+| Li₂₀Si₃P₃S₂₃Cl | 1 | 22 % | ✅ 29 mS/cm |
+| Li₈TiS₆ | 2 | **72 %** | ❌ falsified (~9e-4) |
+| Li₃PS₄ (gen016) | 3 | 27 % | ❌ ~5.5e-3 mS/cm |
+| LiPS₃ (gen021) | 4 (last) | **7 %** | ✅ 10 mS/cm |
 
 The one candidate that mattered — LiPS₃, a ~5-log-unit under-prediction — sits in
 the pool's *bottom decile* of spread: the ensemble is **confidently wrong**. Seed
