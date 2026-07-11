@@ -8,6 +8,11 @@ funnel**, not a precise predictor.
 > Part of the AI4SSB portfolio (Project 1 / "appetizer"). Flagship is the
 > Li₆PS₅Cl MLIP-MD conductivity study (Project 2).
 
+## Headline
+- **CatBoost beats a RandomForest baseline** on the official OBELiX split — test MAE **1.30**, R² **0.44** (log₁₀ S/cm) — and the CV→test drop (R² 0.76 → 0.44) is **reported, not hidden**.
+- **SHAP says structural *Family* is the #1 driver**; the sanity check passes — LGPS + argyrodites (the known superionics) rank highest.
+- **A live Materials Project screen + adversarial audit** (7 kept / 8 dropped) surfaced two literature-blank leads for Project 2 — where MD later **inverted the ranking**, the case for a physics second layer.
+
 ## Where this fits in the portfolio
 
 ![Unified screening → generation → MLIP-MD validation pipeline](https://raw.githubusercontent.com/E1582271-dotcom/Solid-Electrolyte-MLIP-MD/main/figures/08_pipeline_overview.png)

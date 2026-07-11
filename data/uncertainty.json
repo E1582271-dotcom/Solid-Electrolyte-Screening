@@ -1,0 +1,82 @@
+{
+  "n_seeds": 10,
+  "test_spearman_rho": 0.45580544641647464,
+  "test_spearman_p": 1.4918898486670457e-07,
+  "virtual_ensemble_cross_rho": 0.5133909367993343,
+  "max_abs_diff_shipped_vs_ensmean": 0.8218475840375161,
+  "calibration_bins": [
+    {
+      "bin": 0,
+      "mean_std": 0.08077849476118402,
+      "rmse": 0.5972193794099806,
+      "n": 25
+    },
+    {
+      "bin": 1,
+      "mean_std": 0.15909074464971218,
+      "rmse": 0.8529762002807959,
+      "n": 24
+    },
+    {
+      "bin": 2,
+      "mean_std": 0.22870252146946965,
+      "rmse": 1.8703812227007979,
+      "n": 24
+    },
+    {
+      "bin": 3,
+      "mean_std": 0.2999020882297125,
+      "rmse": 2.1497762426863627,
+      "n": 24
+    },
+    {
+      "bin": 4,
+      "mean_std": 0.40772608301284463,
+      "rmse": 2.8560630981787,
+      "n": 24
+    }
+  ],
+  "pool_median_spread": {
+    "known_family": 0.31387079313504473,
+    "unknown": 0.3442179403101511
+  },
+  "leads": [
+    {
+      "label": "li20si3p3s23cl",
+      "formula": "Li20Si3P3S23Cl",
+      "Family": "LGPS",
+      "ens_mean": -4.482297740227487,
+      "ens_std": 0.2599000649483631,
+      "sigma300_mS_cm": 30.1734397477967,
+      "std_percentile_in_pool": 21.73913043478261
+    },
+    {
+      "label": "li3ps4_gen016",
+      "formula": "Li3PS4",
+      "Family": "sulfides",
+      "ens_mean": -6.416406653233251,
+      "ens_std": 0.26965958041910204,
+      "sigma300_mS_cm": 0.00010830595046488209,
+      "std_percentile_in_pool": 26.6304347826087
+    },
+    {
+      "label": "li8tis6",
+      "formula": "Li8TiS6",
+      "Family": "unknown",
+      "ens_mean": -4.8921912886933985,
+      "ens_std": 0.3929992209758338,
+      "sigma300_mS_cm": 1.3794888169732335e-07,
+      "std_percentile_in_pool": 71.73913043478261
+    },
+    {
+      "label": "lips3_gen021",
+      "formula": "LiPS3",
+      "Family": "sulfides",
+      "ens_mean": -7.032369619594415,
+      "ens_std": 0.21966361411517843,
+      "sigma300_mS_cm": 10.188717717771278,
+      "std_percentile_in_pool": 6.521739130434782
+    }
+  ],
+  "verdict_threshold_mS_cm": 1.0
+}
