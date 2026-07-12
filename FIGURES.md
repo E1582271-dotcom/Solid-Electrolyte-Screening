@@ -51,9 +51,12 @@ Low→High), x = SHAP value (impact on `log₁₀ σ`). Source data: `source_dat
 
 **Figure 4 | Offline demo screen of known sulfide electrolytes.**
 Nine well-characterised sulfide solid electrolytes ranked by predicted `log₁₀ σ`, coloured
-by heuristic structural family. Sanity check: LGPS and argyrodites rank highest, Li₂S
-lowest — matching the SHAP family ranking. Bars are a **rank prior**, not a quantitative σ.
-Source data: `source_data/fig04_screen_demo.csv`.
+by heuristic structural family. The sanity check passes at the top — LGPS and argyrodites
+rank highest, matching the SHAP family ranking; the bottom exposes the model's coarseness:
+real superionics (β-Li₃PS₄, Li₄GeS₄, Li₇P₃S₁₁) rank lowest because their OBELiX
+`sulfides`/`thio-LISICON` families are sparse, while the non-conductor Li₂S only lands
+mid-pack. Bars are a **rank prior**, not a quantitative σ. Source data:
+`source_data/fig04_screen_demo.csv`.
 
 **Figure 5 | Live Materials Project screen of Li–S candidates.**
 Top-ranked Li–S candidates (deduplicated by composition) from a blind Materials Project

@@ -82,11 +82,13 @@ Data auto-downloads to `data/` on first run from the OBELiX repo. Python ≥ 3.1
 Applies the trained model as a **coarse conductivity prior to rank candidates**,
 not to predict absolute σ. Two modes:
 - `--demo` (no key): featurizes well-characterised sulfide electrolytes from
-  their approximate experimental cells. Sanity check passes — **LGPS and
-  argyrodites top the list, Li₂S sinks to the bottom**, matching the SHAP family
-  ranking (`figures/04_screen_demo.png`). It also honestly exposes the model's
-  coarseness: Li₇P₃S₁₁ (a real superionic) ranks low because OBELiX's `sulfides`
-  family has only 7 examples — the same ≈1-order-of-magnitude limitation noted above.
+  their approximate experimental cells. The sanity check passes **at the top —
+  LGPS and argyrodites rank highest**, matching the SHAP family ranking
+  (`figures/04_screen_demo.png`). The *bottom* honestly exposes the model's
+  coarseness: real superionics (β-Li₃PS₄, Li₄GeS₄, **Li₇P₃S₁₁**) rank lowest
+  because OBELiX's `sulfides`/`thio-LISICON` families have only a handful of
+  examples, while the true non-conductor Li₂S only lands mid-pack — a
+  ≈1-order-of-magnitude prior, not a clean high=good / low=bad oracle.
 - live (`--api-key` / `$MP_API_KEY` / `mp_api_key.txt`): queries Materials Project
   for Li–S candidates, featurizes, ranks them into `screen_mp_results.csv` +
   `figures/05_screen_mp.png`. **Verified**: a blind MP query puts the LGPS family
