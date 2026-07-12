@@ -47,7 +47,7 @@ not hidden). Source data: `source_data/fig02_parity.csv`.
 structural family and crystal system dominate, then mean electronegativity and cell
 volume/lattice size. **b**, SHAP beeswarm for the top-15 **numeric** features (categoricals
 omitted because colour encodes feature value); colour = per-feature value (viridis,
-Low→High), x = SHAP value (impact on `log₁₀ σ`). Source data: `source_data/fig03_shap_mean_abs.csv`.
+Low→High), x = SHAP value (impact on `log₁₀ σ`). Source data: `source_data/fig03_SHAP_mean_abs.csv`.
 
 **Figure 4 | Offline demo screen of known sulfide electrolytes.**
 Nine well-characterised sulfide solid electrolytes ranked by predicted `log₁₀ σ`, coloured
@@ -63,7 +63,7 @@ Top-ranked Li–S candidates (deduplicated by composition) from a blind Material
 query (n = 184 screened) after the audited filters (exclude H; band gap ≥ 1.5 eV;
 ≥ 3 elements; drop redox-active transition-metal sulfides), coloured by heuristic family.
 The LGPS family (Li₁₀Ge/Si/Sn(PS₆)₂) tops the list — matching the SHAP ranking; only
-families present are shown in the legend. Source data: `source_data/fig05_screen_mp.csv`.
+families present are shown in the legend. Source data: `source_data/fig05_screen_MP.csv`.
 
 **Figure 6 | Manual adversarial audit of the top Materials Project hits.**
 **a**, Funnel from the initial loose query (n = 328) to the audited, filter-tightened pool

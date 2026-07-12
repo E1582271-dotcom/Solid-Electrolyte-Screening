@@ -253,9 +253,9 @@ def run_live(model, api_key, max_n, top_n):
           "heuristic (see header); novel chemistries score on composition + "
           "structure only. Validate the head of this list with Project 2 MD.")
     _plot(ranked.head(min(top_n, 20)), "formula",
-          os.path.join(FIG, "05_screen_mp.png"), family_colors=BLUE_FAMILY_COLORS)
+          os.path.join(FIG, "05_screen_MP.png"), family_colors=BLUE_FAMILY_COLORS)
     print(f"\nSaved: {os.path.relpath(out_csv, HERE)} ({len(ranked)} rows), "
-          "figures/05_screen_mp.png, source_data/fig05_screen_mp.csv")
+          "figures/05_screen_MP.png, source_data/fig05_screen_MP.csv")
     return ranked
 
 
@@ -346,7 +346,7 @@ def main():
     ap.add_argument("--api-key", default=None, help="Materials Project API key")
     ap.add_argument("--max", type=int, default=400, help="max MP entries to featurize")
     ap.add_argument("--top", type=int, default=25, help="rows to print")
-    ap.add_argument("--replot", action="store_true", help="redraw figures/05_screen_mp.png "
+    ap.add_argument("--replot", action="store_true", help="redraw figures/05_screen_MP.png "
                     "from the shipped screen_mp_results.csv (no MP query, no key)")
     args = ap.parse_args()
 
@@ -356,8 +356,8 @@ def main():
             sys.exit("screen_mp_results.csv not found -- run a live screen first.")
         ranked = pd.read_csv(csv)
         _plot(ranked.head(min(args.top, 20)), "formula",
-              os.path.join(FIG, "05_screen_mp.png"), family_colors=BLUE_FAMILY_COLORS)
-        print("Replotted figures/05_screen_mp.png from screen_mp_results.csv "
+              os.path.join(FIG, "05_screen_MP.png"), family_colors=BLUE_FAMILY_COLORS)
+        print("Replotted figures/05_screen_MP.png from screen_mp_results.csv "
               f"({len(ranked)} rows, data unchanged).")
         return
 

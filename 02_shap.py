@@ -110,15 +110,15 @@ def main():
                  ha="center", va="bottom", fontsize=ps.FS_ANNOT, color=ps.PALETTE["neutral_mid"])
 
     ps.add_panel_label(axA, "a"); ps.add_panel_label(axB, "b", x=-0.02)
-    ps.finalize_figure(fig, os.path.join(FIG, "03_shap.png"), w_pad=2.2)
+    ps.finalize_figure(fig, os.path.join(FIG, "03_SHAP.png"), w_pad=2.2)
 
     rank = np.argsort(mean_abs)[::-1]
     pd.DataFrame({"feature": [cols[i] for i in rank],
                   "label": [pretty_feature(cols[i]) for i in rank],
                   "mean_abs_shap": mean_abs[rank]}).to_csv(
-        os.path.join(SRC, "fig03_shap_mean_abs.csv"), index=False)
+        os.path.join(SRC, "fig03_SHAP_mean_abs.csv"), index=False)
     print("Top features:", [cols[i] for i in top_all[:8]])
-    print("Saved: figures/03_shap.png, source_data/fig03_shap_mean_abs.csv")
+    print("Saved: figures/03_SHAP.png, source_data/fig03_SHAP_mean_abs.csv")
 
 
 if __name__ == "__main__":

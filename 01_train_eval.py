@@ -102,7 +102,7 @@ def plot_eda(ally, top_fam):
     ax[1].set_xlim(floor, top_fam.values.max() + 0.75)
     ax[1].set_xlabel("Median log$_{10}$ σ  (S cm$^{-1}$)")
     ps.add_panel_label(ax[0], "a"); ps.add_panel_label(ax[1], "b", x=-0.02)
-    ps.finalize_figure(fig, os.path.join(FIG, "01_eda.png"), w_pad=2.2)
+    ps.finalize_figure(fig, os.path.join(FIG, "01_EDA.png"), w_pad=2.2)
 
 
 def plot_parity(y_true, y_pred, cens):
@@ -136,7 +136,7 @@ def replot_from_source_data():
     par = pd.read_csv(os.path.join(SRC, "fig02_parity.csv"))
     plot_parity(par["true_log10_sigma"].to_numpy(), par["pred_log10_sigma"].to_numpy(),
                 par["censored"].to_numpy().astype(bool))
-    print("Replotted figures/01_eda.png + 02_parity_test.png from source_data/ "
+    print("Replotted figures/01_EDA.png + 02_parity_test.png from source_data/ "
           "(no retraining).")
 
 
@@ -195,7 +195,7 @@ def main():
                   "censored": test["censored"].to_numpy()}).to_csv(
         os.path.join(SRC, "fig02_parity.csv"), index=False)
     print("Saved: data/metrics.json, catboost_model.cbm, "
-          "figures/01_eda.png, figures/02_parity_test.png, source_data/")
+          "figures/01_EDA.png, figures/02_parity_test.png, source_data/")
 
 
 if __name__ == "__main__":

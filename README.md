@@ -53,9 +53,9 @@ Top drivers: **structural Family** and **crystal system**, then **mean
 electronegativity** and **cell volume / lattice size**. Sanity check: median
 conductivity by family ranks **LGPS and argyrodites (Li₆PS₅Cl family)
 highest** — the known superionic classes — so the model has learned real
-chemistry, not noise. See also `figures/01_eda.png`; full captions in [FIGURES.md](FIGURES.md).
+chemistry, not noise. See also `figures/01_EDA.png`; full captions in [FIGURES.md](FIGURES.md).
 
-![SHAP interpretation — a: mean(|SHAP|) ranking, b: beeswarm (numeric features)](figures/03_shap.png)
+![SHAP interpretation — a: mean(|SHAP|) ranking, b: beeswarm (numeric features)](figures/03_SHAP.png)
 
 ## Honest limitations
 - Experimental conductivities are small and noisy; the **same material can
@@ -91,7 +91,7 @@ not to predict absolute σ. Two modes:
   ≈1-order-of-magnitude prior, not a clean high=good / low=bad oracle.
 - live (`--api-key` / `$MP_API_KEY` / `mp_api_key.txt`): queries Materials Project
   for Li–S candidates, featurizes, ranks them into `screen_mp_results.csv` +
-  `figures/05_screen_mp.png`. **Verified**: a blind MP query puts the LGPS family
+  `figures/05_screen_MP.png`. **Verified**: a blind MP query puts the LGPS family
   (Li₁₀Ge/Si/SnP₂S₁₂) at ranks 1–3 — matching the SHAP family ranking.
 
 Since `Family` is OBELiX's strongest feature but unavailable for MP entries, it is
@@ -101,7 +101,7 @@ to `unknown` (an unseen CatBoost category) and score on composition + structure
 alone. The assigned family is written to the CSV so every score is auditable.
 **Honestly, this heuristic leaves most of the pool unlabelled**: 144/184 (78.3%)
 of the final screened candidates are `Family=unknown` — a real gap given `Family`
-is the model's single most important feature (see `figures/03_shap.png`, panel a).
+is the model's single most important feature (see `figures/03_SHAP.png`, panel a).
 
 ![Family coverage of the final MP candidate pool — 78.3% are Family=unknown](figures/07_family_coverage.png)
 
