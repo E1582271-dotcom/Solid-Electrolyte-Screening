@@ -11,13 +11,13 @@ before creating figures, and finalize_figure() to save 600 dpi PNG (add "svg"/"p
 Self-contained on purpose: this repo ships standalone, so it does not import Project 2.
 
 =============================================================================
-AI4SSB SHARED PLOTSTYLE -- CORE (byte-identical across all 3 portfolio repos)
+AI4SSB SHARED PLOTSTYLE -- CORE (byte-identical across all 4 portfolio repos)
 Canonical source: project2_mlip_md/src/plotstyle.py
 This file is a physical copy (not an import -- each repo must stay independently
-cloneable/runnable). CORE_VERSION = "1.0.0"   Last synced: 2026-07-05
+cloneable/runnable). CORE_VERSION = "1.0.1"   Last synced: 2026-07-13
 Everything from here down to "END CORE" must stay byte-identical across all
-three copies. If you change any of it, edit the canonical source first, then
-bump CORE_VERSION + the sync date in all three repos in the same sitting.
+four copies. If you change any of it, edit the canonical source first, then
+bump CORE_VERSION + the sync date in all four repos in the same sitting.
 =============================================================================
 """
 from __future__ import annotations
@@ -133,8 +133,8 @@ def save_source_data(fig_path: str, columns, rows, subdir: str = "source_data"):
 
 # =============================================================================
 # END CORE -- everything below is this repo's own semantic palette layer.
-# Free to diverge from project2_mlip_md / project3_generative; does not need
-# to match the other two repos.
+# Free to diverge from project2_mlip_md / project3_generative /
+# project4_interface; does not need to match the other three repos.
 # =============================================================================
 
 # CVD-safe qualitative palette (Okabe-Ito) for the screening families, so the
