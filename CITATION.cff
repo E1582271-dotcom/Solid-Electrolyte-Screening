@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+message: "If you use Project 1, cite this software release, OBELiX, and Materials Project."
+title: "Project 1: Auditable formula-first screening of Li-S solid-electrolyte space"
+type: software
+version: 0.1.0
+authors:
+  - family-names: Jia
+    given-names: Jieao
+license: MIT
+repository-code: "https://github.com/E1582271-dotcom/Solid-Electrolyte-Screening"
+preferred-citation:
+  type: software
+  title: "Project 1: Auditable formula-first screening of Li-S solid-electrolyte space"
+  authors:
+    - family-names: Jia
+      given-names: Jieao
+  year: 2026
+  version: 0.1.0
+references:
+  - type: article
+    title: "OBELiX: a curated dataset of experimentally measured ionic conductivities"
+    authors:
+      - family-names: Therrien
+        given-names: Félix
+      - family-names: Abou Haibeh
+        given-names: Jamal
+      - family-names: Sharma
+        given-names: Divya
+      - family-names: Hendley
+        given-names: Rhiannon
+      - family-names: Hernández-García
+        given-names: Alex
+      - family-names: Shin
+        given-names: Homin
+    doi: 10.1039/D5DD00441A
+    journal: Digital Discovery
+    year: 2026
+  - type: article
+    title: "Accelerated data-driven materials science with the Materials Project"
+    authors:
+      - family-names: Horton
+        given-names: Matthew K.
+      - family-names: Huck
+        given-names: Patrick
+      - family-names: Yang
+        given-names: Haowei
+      - family-names: Persson
+        given-names: Kristin A.
+    doi: 10.1038/s41563-025-02272-0
+    journal: Nature Materials
+    year: 2025

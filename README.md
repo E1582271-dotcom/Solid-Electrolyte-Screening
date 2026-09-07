@@ -1,185 +1,218 @@
-# Project 1 — Data-Driven Ionic-Conductivity Screening (OBELiX)
+# Project 1 — Auditable formula-first screening of Li–S solid-electrolyte space
 
-A small, honest ML project: predict room-temperature Li-ion conductivity of
-solid electrolytes from composition + crystallography, and explain *what the
-model keys on* with SHAP. Positioned as the **first layer of a screening
-funnel**, not a precise predictor.
+Project 1 turns 599 experimental ionic-conductivity records into a reproducible,
+composition-first ranking of a frozen Materials Project (MP) search space. The
+release is designed as an auditable statistical-screening study: it exposes split
+overlap, censoring, representation transfer, applicability domain, empirical
+risk heuristics, and the disposition of every queried MP entry.
 
-> Part of the AI4SSB portfolio (Project 1 / "appetizer"). Flagship is the
-> Li₆PS₅Cl MLIP-MD conductivity study (Project 2).
+The output is a **ranking and evidence-state map**, not a claim of ionic
+conductivity, novelty, synthesizability, or mechanism. No named “hero” candidate
+is promoted. MLIP-MD, new DFT calculations, synthesis, and wet experiments are
+explicitly outside Project 1 and belong in separate projects.
 
-## Headline
-- **CatBoost beats a RandomForest baseline** on the official OBELiX split — test MAE **1.30**, R² **0.44** (log₁₀ S/cm) — and the CV→test drop (R² 0.76 → 0.44) is **reported, not hidden**.
-- **SHAP says structural *Family* is the #1 driver**; the sanity check passes — LGPS + argyrodites (the known superionics) rank highest.
-- **A live Materials Project screen + adversarial audit** (7 kept / 8 dropped) surfaced two literature-blank leads for Project 2 — where MD later **inverted the ranking**, the case for a physics second layer.
+![Study design](figures/01_study_design.png)
 
-## Where this fits in the portfolio
+## What the rebuilt project establishes
 
-![Unified screening → generation → MLIP-MD validation pipeline](https://raw.githubusercontent.com/E1582271-dotcom/Solid-Electrolyte-MLIP-MD/main/figures/supplementary/08_pipeline_overview.png)
+- OBELiX contributes 478 official training and 121 held-out records. Canonical,
+  scale-invariant composition keys reveal two compositions shared across the
+  official split. Strict held-out evaluation therefore removes the corresponding
+  two training rows and uses 476 train / 121 test records; DOI overlap is zero.
+- All 37 one-sided conductivity upper bounds (29 train, 8 test) are retained.
+  The held-out point-MAE and one-sided censor-aware MAE are both 1.353 log units
+  for this release.
+- The primary representation contains 132 Magpie descriptors, number of
+  elements, and Li atomic fraction (134 formula-only features). In matched
+  five-fold composition-grouped CV, the 15-member perturbation ensemble reaches
+  MAE 0.843 ± 0.136, RMSE 1.381 ± 0.176, and Spearman ρ 0.882 ± 0.012.
+- On the strict held-out test, MAE is 1.353, RMSE 1.947, R² 0.411, Spearman
+  ρ 0.660, and mean bias −0.363 log units. These errors preclude interpreting
+  predictions as quantitative conductivity measurements. The predefined
+  Li–S target-domain subset is smaller and weaker (24 records; MAE 1.585,
+  Spearman ρ 0.375; bootstrap ρ interval −0.255 to 0.881).
+- Matched strict-test baselines are reported rather than inferred from CV. The
+  random forest and single base CatBoost have MAE 1.293 and 1.291,
+  respectively, versus 1.353 for the perturbation ensemble. The paired
+  cluster-bootstrap ensemble-minus-single-model difference is 0.062
+  (95% interval 0.020–0.106), so no strict-test ensemble advantage is claimed.
+- Structural ablations are evaluated on identical folds. Raw cell conventions
+  vary strongly across repeated compositions; even scale-invariant normalization
+  leaves a residual outlier. Formula-only M0 is therefore the production
+  representation because it is exactly computable for both experiments and MP.
+- The frozen MP query uses database version `2026.04.13` and returns 248 unique
+  entries. Every entry receives exactly one disposition: 80 oxygen-scope
+  exclusions, 19 redox/electronic-risk entries, 70 OBELiX-composition references,
+  and 79 candidate entries.
+- The 79 candidate structure entries collapse to a complete queue of 62 unique
+  normalized compositions: 49 compositions have one MP structure, nine have
+  two, and four have three. At the predefined q75 descriptive thresholds, 27 are
+  extrapolative, 12 are high-score/lower-risk, and 23 are unflagged. These states
+  describe evidence, not experimental or computational priority.
+- Ensemble spread and applicability-domain (AD) distance are related empirical
+  risk heuristics, not calibrated uncertainty. Their associations with error are
+  reported for both the full strict test and the smaller Li–S target-domain subset;
+  in the latter, all three correlations are weak and statistically inconclusive.
 
-*Full pipeline diagram lives in the flagship repo: [Solid-Electrolyte-MLIP-MD/figures/supplementary/08_pipeline_overview.png](https://github.com/E1582271-dotcom/Solid-Electrolyte-MLIP-MD/blob/main/figures/supplementary/08_pipeline_overview.png) (generated by [`08_pipeline_overview.py`](https://github.com/E1582271-dotcom/Solid-Electrolyte-MLIP-MD/blob/main/08_pipeline_overview.py)). This repo is **Project 1 (screen)** in that diagram — its two funnel leads (Li₂₀Si₃P₃S₂₃Cl, Li₈TiS₆) get MLIP-MD-validated in [Solid-Electrolyte-MLIP-MD](https://github.com/E1582271-dotcom/Solid-Electrolyte-MLIP-MD).*
+## Five-figure evidence chain
 
-## Data
-[OBELiX](https://github.com/NRC-Mila/OBELiX) — 599 experimental entries
-(478 train / 121 test, **official split** to avoid leakage). Target =
-`log10(ionic conductivity / S cm⁻¹)`.
+Five main figures are exported to `figures/`; one supplementary figure
+(boosting and learning curves) is exported to `figures/supplementary/` under
+the same contract. Every file is a 900 dpi, RGB, pure-white,
+grid-free PNG with a 183 mm double-column width and height no greater than
+170 mm. A shared Nature-informed visual system controls Arial-first typography,
+accessible colours, redundant marker shapes, evidence hierarchy, and panel
+spacing. No PDF, SVG, TIFF, or alpha channel is produced under the selected
+output contract; consequently, these files are visually prepared for manuscript
+review but are not a substitute for Nature's final editable-vector source.
+Stand-alone legends and panel-to-source mappings are in [FIGURES.md](FIGURES.md).
 
-## Method
-- **Features** (`src/featurize.py`): a hand-built *Magpie-lite* composition
-  descriptor set — fraction-weighted mean/std/min/max/range of element
-  properties (Z, mass, electronegativity, row, group, Mendeleev #, atomic
-  radius) + Li fraction + n_elements — plus crystallography (a/b/c/angles,
-  cell volume, space-group #, Z) and two categoricals (Family, crystal
-  system). No matminer dependency, so every feature is explainable.
-- **Models**: CatBoost (native categorical handling, NaN-safe) vs a
-  RandomForest baseline (median impute + one-hot). Small, noisy data → trees,
-  **not GNNs** (consistent with the OBELiX benchmark).
-- **Evaluation**: 5-fold CV on train, then a single held-out test evaluation.
+1. **Study design and accounting** — measured evidence, split correction, and
+   exhaustive 248-entry disposition.
 
-## Results (log10 S/cm)
-| | CV MAE | CV R² | Test MAE | Test R² |
-|---|---|---|---|---|
-| **CatBoost**   | 0.82 ± 0.07 | 0.76 ± 0.04 | **1.30** | **0.44** |
-| RandomForest   | 0.85 ± 0.07 | 0.72 ± 0.04 | 1.42 | 0.37 |
+   ![Figure 1](figures/01_study_design.png)
 
-CatBoost wins on both. **The CV→test gap (R² 0.76 → 0.44) is real and
-reported, not hidden** — the official test split is a harder distribution;
-treat single-number predictions with caution.
+2. **Model validation** — target coverage, grouped CV, strict test, censoring,
+   and cluster-bootstrap uncertainty.
 
-![Held-out test parity — CatBoost predictions vs. experiment](figures/02_parity_test.png)
+   ![Figure 2](figures/02_model_validation.png)
 
-### What the model learns (SHAP)
-Top drivers: **structural Family** and **crystal system**, then **mean
-electronegativity** and **cell volume / lattice size**. Sanity check: median
-conductivity by family ranks **LGPS and argyrodites (Li₆PS₅Cl family)
-highest** — the known superionic classes — so the model has learned real
-chemistry, not noise. See also `figures/01_EDA.png`; full captions in [FIGURES.md](FIGURES.md).
+3. **Transfer and risk** — representation ablation, cell-convention audit,
+   ensemble spread, and applicability domain.
 
-![SHAP interpretation — a: mean(|SHAP|) ranking, b: beeswarm (numeric features)](figures/03_SHAP.png)
+   ![Figure 3](figures/03_transfer_and_risk.png)
 
-## Honest limitations
-- Experimental conductivities are small and noisy; the **same material can
-  differ by an order of magnitude across papers**.
-- **Censored values** (`<1E-10`, 29 in train) are parsed to their numeric
-  bound and flagged — a known approximation.
-- Composition features **cannot distinguish polymorphs**.
-- This is a coarse pre-filter (≈1 order-of-magnitude error), useful for
-  ranking candidates, **not** for quantitative conductivity.
+4. **Global screening landscape** — all 248 MP entries in descriptor, score,
+   rank, and risk views without silent removal.
 
-## Reproduce
-```bash
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+   ![Figure 4](figures/04_screening_landscape.png)
 
-python 01_train_eval.py         # data → CV → test → data/metrics.json + figures
-python 02_shap.py               # SHAP importance + beeswarm
-python 04_screen_mp.py --demo   # rank known sulfide SEs, no API key
-python 04_screen_mp.py --api-key <KEY>   # live Materials Project screen
+5. **Complete candidate atlas** — all 62 compositions, their raw metrics,
+   evidence states, and rank stability across all 15 ensemble members.
+
+   ![Figure 5](figures/05_candidate_atlas.png)
+
+## Scientific workflow
+
+```text
+OBELiX 599 records
+  ├─ canonical composition + DOI + censor audit
+  ├─ composition-grouped CV on official train
+  └─ strict held-out test after two-row decontamination
+                │
+                ▼
+formula-only 15-member perturbation ensemble
+  ├─ seed + model-configuration variation
+  └─ PCA / 5-nearest-neighbour applicability domain
+                │
+                ▼
+frozen MP query: 248 entries
+  ├─ 80 oxygen-scope exclusion
+  ├─ 19 redox/electronic risk
+  ├─ 70 OBELiX-composition reference
+  └─ 79 candidate structure entries → 62 normalized compositions
+       (49 × 1 structure, 9 × 2 structures, 4 × 3 structures)
 ```
-Data auto-downloads to `data/` on first run from the OBELiX repo. Python ≥ 3.10.
 
-## Screening funnel (`04_screen_mp.py`)
-Applies the trained model as a **coarse conductivity prior to rank candidates**,
-not to predict absolute σ. Two modes:
-- `--demo` (no key): featurizes well-characterised sulfide electrolytes from
-  their approximate experimental cells. The sanity check passes **at the top —
-  LGPS and argyrodites rank highest**, matching the SHAP family ranking
-  (`figures/04_screen_demo.png`). The *bottom* honestly exposes the model's
-  coarseness: real superionics (β-Li₃PS₄, Li₄GeS₄, **Li₇P₃S₁₁**) rank lowest
-  because OBELiX's `sulfides`/`thio-LISICON` families have only a handful of
-  examples, while the true non-conductor Li₂S only lands mid-pack — a
-  ≈1-order-of-magnitude prior, not a clean high=good / low=bad oracle.
-- live (`--api-key` / `$MP_API_KEY` / `mp_api_key.txt`): queries Materials Project
-  for Li–S candidates, featurizes, ranks them into `screen_mp_results.csv` +
-  `figures/05_screen_MP.png`. **Verified**: a blind MP query puts the LGPS family
-  (Li₁₀Ge/Si/SnP₂S₁₂) at ranks 1–3 — matching the SHAP family ranking.
+The MP chemical and thermodynamic filters define the population being ranked;
+they are not learned features. The production ensemble is trained on all 599
+records only after evaluation is complete.
 
-Since `Family` is OBELiX's strongest feature but unavailable for MP entries, it is
-assigned only by a **transparent stoichiometry heuristic** (argyrodite Li₆PS₅X,
-LGPS Li₁₀MP₂S₁₂, thio-LISICON LiₓMS₄, Li₃PS₄/Li₇P₃S₁₁); novel chemistries fall back
-to `unknown` (an unseen CatBoost category) and score on composition + structure
-alone. The assigned family is written to the CSV so every score is auditable.
-**Honestly, this heuristic leaves most of the pool unlabelled**: 144/184 (78.3%)
-of the final screened candidates are `Family=unknown` — a real gap given `Family`
-is the model's single most important feature (see `figures/03_SHAP.png`, panel a).
+## Installation and commands
 
-![Family coverage of the final MP candidate pool — 78.3% are Family=unknown](figures/07_family_coverage.png)
+Python 3.11 or newer is required.
 
-### Audit-driven candidate filters (see [`screen_audit.md`](screen_audit.md))
-The composition+structure features are **blind to electronic conductivity and
-electrochemical role**, so an initial loose run surfaced three classes of
-false hits. Each top-15 hit was adversarially audited against literature; the fixes
-are now baked into the query:
-- `exclude_elements=["H"]` — drops hydrate / ammonium / oxysalt artifacts
-  (Li₃SbS₄·9H₂O, Li(NH₄)SO₄ — whose "S" is a *sulfate*, not sulfide).
-- drop redox-active TM sulfides {V,Cr,Mn,Fe,Co,Ni,Cu,Mo,W} + `band_gap ≥ 1.5` —
-  demotes mixed ionic-electronic conductors / cathodes (Li₃CuS₂, Li₈CrS₆, Li₃NbS₄).
-- `num_elements ≥ 3` — drops binary precursors (Li₂S, ~1e-13 S/cm, no Li path).
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e '.[dev]'
 
-The audit confirmed the LGPS top-3 as real superionics and surfaced two clean,
-literature-blank leads — **Li₂₀Si₃P₃S₂₃Cl** and **Li₈TiS₆** — for Project 2 MD.
+p1screen evaluate
+p1screen training-curves
+p1screen screen
+p1screen figures
+p1screen verify --frozen
+```
 
-![Audit funnel (328→184) and verdict breakdown of the 15 manually audited hits](figures/06_screen_audit.png)
+The wheel contains the Python workflow, not the writable research payload. For
+a non-editable installation, point it at an extracted Project 1 release before
+running data commands:
 
-Run `python 05_screen_audit_figures.py` to regenerate these two figures — both
-read already-shipped static data (`screen_mp_results.csv` + the audit table
-above, transcribed once as a data literal), so it never touches the network.
+```bash
+export P1SCREEN_ROOT=/path/to/project1_screening
+```
 
-## Does the screen know when it is guessing? (`06_uncertainty.py`)
+To rebuild every derived artifact from the vendored OBELiX splits and frozen MP
+snapshot:
 
-Project 2's MD campaign **inverted this model's ranking**: of the four leads sent
-to MD, LiPS₃ (a Project-3 generated candidate) was ranked *last* by the prior
-(−7.1 log₁₀ S/cm) yet measured σ(300 K) ≈ 10 mS/cm — while 2nd-ranked Li₈TiS₆ was
-falsified as near-insulating. Hypothesis: an **uncertainty-aware** screen would
-have flagged the mis-ranked candidate as "don't trust this rank, send it to MD".
+```bash
+p1screen rebuild
+```
 
-Test: a 10-seed CatBoost ensemble (identical config to the shipped model, only
-`random_seed` varies; `catboost_model.cbm` itself is untouched). The spread *is*
-informative in-distribution — on the held-out test split, Spearman ρ(spread,
-|error|) = 0.46 (p ≈ 1e-7), binned RMSE rising monotonically 0.6 → 2.9 log units
-(Fig. 8a), and CatBoost virtual ensembles rank the same points alike (ρ = 0.51).
+Refreshing MP is an explicit, reviewed operation because database content can
+change:
 
-**Result: the hypothesis is refuted** (Fig. 8b, retro-scored on the same
-primitive cells the funnel originally saw):
+```bash
+export MP_API_KEY='...'
+p1screen refresh-mp
+p1screen rebuild
+```
 
-| lead | prior rank | ensemble spread (pool percentile) | MD verdict |
-|---|---|---|---|
-| Li₂₀Si₃P₃S₂₃Cl | 1 | 22 % | ✅ 29 mS/cm |
-| Li₈TiS₆ | 2 | **72 %** | ❌ falsified (~9e-4) |
-| Li₃PS₄ (gen016) | 3 | 27 % | ❌ ~5.5e-3 mS/cm |
-| LiPS₃ (gen021) | 4 (last) | **7 %** | ✅ 10 mS/cm |
+The refresh command accepts the key only through `MP_API_KEY`, requires the
+reviewed database version and 248-entry count, and stores scalar metadata only.
+No crystal structures or credentials are distributed.
 
-The one candidate that mattered — LiPS₃, a ~5-log-unit under-prediction — sits in
-the pool's *bottom decile* of spread: the ensemble is **confidently wrong**. Seed
-ensembles measure *variance*, but a distribution-shifted input (a generated
-stoichiometry with no training-set analog) fails through *bias* that every seed
-shares. High spread did flag the falsified Li₈TiS₆, so spread is a useful
-*positive* signal; it is just not a safe *negative* one.
+The numbered Python files remain thin compatibility wrappers around the same
+CLI. `p1screen` is the authoritative interface.
 
-The design rule this buys (stronger than the original hypothesis): **statistical
-uncertainty on a cheap prior cannot replace physics-based validation.** Generated
-/ out-of-distribution candidates must be routed to the MD layer regardless of how
-confident the prior looks — which is exactly the role the funnel's second layer
-already plays.
+## Repository contract
 
-![Ensemble calibration and the risk map with the four MD-validated leads](figures/08_uncertainty.png)
+```text
+src/p1screen/              package: data, features, models, screen, figures, gate
+data/train.csv             vendored OBELiX official training split
+data/test.csv              vendored OBELiX official test split
+data/mp_snapshot.csv       frozen 248-entry minimal MP metadata snapshot
+data/metrics.json          evaluation results and audit statistics
+data/model_manifest.json   15 member definitions and SHA-256 checksums
+data/release_manifest.json reviewed offline release checksums
+artifacts/models/          15 serialized production ensemble members
+mp_ledger.csv              exhaustive entry-level 248-row ledger
+candidate_queue.csv        complete 62-composition candidate table
+source_data/               panel-ready quantitative CSVs
+figures/                   five main 900 dpi RGB PNG files
+figures/supplementary/     Supplementary Fig. S1 (boosting and learning curves)
+tests/                     unit and frozen-contract tests
+```
 
-Reproduce: `python 06_uncertainty.py` (trains the 10-seed ensemble ~1 min, live
-MP re-query needs `mp_api_key.txt`); `--skip-mp` for the offline calibration +
-leads subset; `--replot` redraws Fig. 8 from `source_data/` without retraining.
+The offline gate rejects stale figure/source inventories, missing candidates,
+checksum mismatches, non-RGB images, non-white canvases, wrong DPI, database
+drift, incomplete dispositions, and credential-like tracked files.
 
-## Next
-- ~~Hand the two audited leads (Li₂₀Si₃P₃S₂₃Cl, Li₈TiS₆) to Project 2 (MLIP-MD) for
-  quantitative validation~~ — done (W11): the funnel *ranks*, MD *certifies*, and
-  the ranking inversion above is why the second layer is load-bearing.
-- ~~Feed Project 3 (generative) candidates through this model for ranking.~~ — done
-  (Project 3 `03_score_conductivity.py` imports this model).
+## Interpretation limits
 
-## Data & credit
-Data: **OBELiX** (Therrien et al., *Digital Discovery*, 2026,
-[10.1039/D5DD00441A](https://doi.org/10.1039/D5DD00441A);
-[arXiv:2502.14234](https://arxiv.org/abs/2502.14234);
-[repo](https://github.com/NRC-Mila/OBELiX)). The dataset is downloaded from the
-original repository at runtime and is not redistributed here. Their reported RF
-baseline is MAE ≈ 1.6 (log₁₀ S/cm) with a label-noise floor of ≈ 0.4; this
-project reaches a comparable test MAE of 1.30 with CatBoost.
+- OBELiX is small and heterogeneous; measurement temperature, processing,
+  microstructure, disorder, and interface effects are not uniformly represented.
+- A formula-only model cannot resolve polymorphs, defects, phase mixtures,
+  electronic leakage, or kinetic stability.
+- The held-out MAE is approximately 1.35 orders of magnitude. The MP output must
+  be used for population ranking, not conductivity prediction in physical units.
+- In the 24-record target-domain subset, MAE rises to approximately 1.58 and R²
+  is negative; its broad bootstrap intervals make transfer conclusions tentative.
+- Ensemble spread and AD distance identify relative risk but are not calibrated
+  confidence intervals and cannot guarantee error out of domain.
+- The oxygen and redox/electronic rules are explicit scope filters, not universal
+  chemical impossibility statements.
+- An ICSD identifier is a provenance cue only. No novelty claim is made.
+- No downstream DFT, molecular dynamics, synthesis, or wet-experiment outcome is
+  used to evaluate or retroactively tune Project 1.
+
+## Data, citation, and license
+
+OBELiX data are credited to Therrien *et al.*, *Digital Discovery* (2026),
+[doi:10.1039/D5DD00441A](https://doi.org/10.1039/D5DD00441A), and retain their
+CC BY 4.0 terms. Materials Project metadata must be cited using the references
+listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Repository code is
+MIT licensed; data and third-party metadata are not relicensed by that grant.
+
+See [METHODS.md](METHODS.md), [DATA_DICTIONARY.md](DATA_DICTIONARY.md),
+[REPRODUCIBILITY.md](REPRODUCIBILITY.md), and [CITATION.cff](CITATION.cff).

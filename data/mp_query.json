@@ -1,0 +1,26 @@
+{
+  "database_version": "2026.04.13",
+  "filters": {
+    "band_gap_eV": [
+      1.5,
+      null
+    ],
+    "elements": [
+      "Li",
+      "S"
+    ],
+    "energy_above_hull_eV_atom": [
+      0,
+      0.05
+    ],
+    "exclude_elements": [
+      "H"
+    ],
+    "num_elements": [
+      3,
+      5
+    ]
+  },
+  "n_entries": 248,
+  "retrieved_utc": "2026-07-16T17:13:32.229195+00:00"
+}

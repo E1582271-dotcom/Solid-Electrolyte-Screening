@@ -1,0 +1,19 @@
+name: p1screen-0.1.0
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14.6
+  - pip
+  - pip:
+      - numpy==2.5.0
+      - pandas==2.3.3
+      - scipy==1.18.0
+      - scikit-learn==1.9.0
+      - catboost==1.2.10
+      - pymatgen==2026.5.4
+      - matminer==0.10.1
+      - matplotlib==3.11.0
+      - pillow==12.2.0
+      - mp-api==0.46.4
+      - pytest==8.4.2
+      - ruff==0.14.13

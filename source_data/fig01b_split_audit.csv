@@ -1,0 +1,2 @@
+n_train_original,n_test,n_train_composition_groups,n_test_composition_groups,n_composition_overlap_groups,n_nominal_composition_overlap_groups,n_formula_identity_mismatch_train,n_formula_identity_mismatch_test,n_train_rows_removed_for_strict_test,n_train_strict,n_test_composition_novel,n_doi_overlap,n_censored_train,n_censored_test,censor_directions
+478,121,390,112,2,2,6,6,2,476,119,0,29,8,"['', '<']"

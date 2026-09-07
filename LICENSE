@@ -22,7 +22,6 @@ SOFTWARE.
 
 ---
 
-Note: this license covers the code in this repository only. The OBELiX dataset
-(Therrien et al., Digital Discovery, 2026) is downloaded at runtime from its
-original repository and is not redistributed here; it is subject to its own
-license — see https://github.com/NRC-Mila/OBELiX.
+Note: this license covers repository code and original documentation only.
+Vendored OBELiX data retain their CC BY 4.0 terms, and Materials Project-derived
+metadata retain applicable upstream terms. See THIRD_PARTY_NOTICES.md.

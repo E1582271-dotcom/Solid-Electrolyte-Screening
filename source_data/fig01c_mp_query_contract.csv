@@ -1,0 +1,2 @@
+database_version,n_entries,required_elements,excluded_elements,min_elements,max_elements,min_e_above_hull,max_e_above_hull,min_band_gap
+2026.04.13,248,Li;S,H,3,5,0.0,0.05,1.5
