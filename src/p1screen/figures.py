@@ -883,20 +883,22 @@ def figure_03() -> None:
         textcoords="axes fraction",
         arrowprops={"arrowstyle": "-", "color": GRAY, "lw": 0.7},
     )
+    # Right-aligned so a wider fallback face grows the label into the empty
+    # upper-right corner instead of past the canvas edge.
     ax.text(
-        0.62,
+        0.98,
         0.95,
         "Normalized >1.5: "
         f"{int(convention.volume_per_atom_ratio.gt(1.5).sum())} group",
         transform=ax.transAxes,
-        ha="left",
+        ha="right",
         va="top",
         color=INK,
     )
     ax.annotate(
         "",
         xy=(normalized_row.raw_volume_ratio, normalized_row.volume_per_atom_ratio),
-        xytext=(0.60, 0.90),
+        xytext=(0.58, 0.87),
         textcoords="axes fraction",
         arrowprops={"arrowstyle": "-", "color": GRAY, "lw": 0.7},
     )
