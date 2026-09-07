@@ -11,9 +11,33 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: pip
-      - run: pip install -e '.[dev]'
+          # Matches the interpreter series pinned in environment.lock.yml.
+          python-version: "3.14"
+      # The frozen figures and the object-level layout tests depend on exact
+      # Matplotlib font metrics, so CI installs the reviewed versions from
+      # environment.lock.yml rather than re-resolving the open ranges in
+      # pyproject.toml.  environment.lock.yml stays the single source of truth.
+      - name: Install the reviewed environment
+        run: |
+          grep -E '^ +- .+==' environment.lock.yml | sed 's/^ *- *//' > /tmp/locked.txt
+          cat /tmp/locked.txt
+          pip install -r /tmp/locked.txt
+          pip install -e . --no-deps
+      - name: Confirm the installed versions match the release manifest
+        run: |
+          python - <<'PY'
+          import json
+          from importlib.metadata import version
+          reviewed = json.load(open("data/release_manifest.json"))["package_versions"]
+          drift = {
+              name: (expected, version(name))
+              for name, expected in reviewed.items()
+              if version(name) != expected
+          }
+          if drift:
+              raise SystemExit(f"installed packages differ from the release manifest: {drift}")
+          print(f"all {len(reviewed)} reviewed package versions match")
+          PY
       - run: pytest
       - run: ruff check src tests
       - run: p1screen verify --frozen

@@ -259,9 +259,9 @@
       "sha256": "0af36da5e23aa1c519f8aa87fc7c969ef9079249daf854374f98ae6a0eff178e"
     },
     {
-      "bytes": 406,
+      "bytes": 1632,
       "path": ".github/workflows/ci.yml",
-      "sha256": "35d93c80a2907626b2258eeae993d905642c2613cc6c463730333722448b7ab9"
+      "sha256": "7c3cb1c7b5d1ac1dbf6540b3517962d513c17a78ea046ef21477f37a007431b0"
     },
     {
       "bytes": 91889,
@@ -483,5 +483,5 @@
   },
   "project_version": "0.1.0",
   "python": "3.14.6",
-  "verified_utc": "2026-09-07T03:07:20.521354+00:00"
+  "verified_utc": "2026-09-07T03:12:47.023818+00:00"
 }
