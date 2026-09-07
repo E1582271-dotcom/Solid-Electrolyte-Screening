@@ -45,7 +45,7 @@
       "height_px": 4995,
       "mode": "RGB",
       "path": "figures/03_transfer_and_risk.png",
-      "sha256": "b3876a3a11abe2215c30138a4b1c830eac2b5416d10418a0ff82568b67bc6d58",
+      "sha256": "b5678c4ff593fcc2bf9478d700dcb349b8fe6b510596654305f17396cfe6029d",
       "width_px": 6480
     },
     {
@@ -174,9 +174,9 @@
       "sha256": "7bee49f85fdc5602e96a6964c36b2c72d9cb0c9c2d95218a47cce32eeb0139fb"
     },
     {
-      "bytes": 48696,
+      "bytes": 49326,
       "path": "src/p1screen/figures.py",
-      "sha256": "c90c09b15ea3e2fe16ed859050ce44f974adb094fc0d7674dd1c7dec4620c063"
+      "sha256": "1852aa8d823bff16fdcedddd424a1524cfb855ed516ceb1322b2066cc05d27b2"
     },
     {
       "bytes": 2836,
@@ -483,5 +483,5 @@
   },
   "project_version": "0.1.0",
   "python": "3.14.6",
-  "verified_utc": "2026-09-07T03:12:47.023818+00:00"
+  "verified_utc": "2026-09-07T03:19:39.193318+00:00"
 }

@@ -924,7 +924,13 @@ def figure_03() -> None:
         ABSOLUTE_ERROR_LABEL,
     )
     rho = test[["spread", "ad_distance"]].corr(method="spearman").iloc[0, 1]
-    ax.text(0.98, 0.05, f"Spread–AD Spearman ρ = {rho:.2f}",
+    # Reserve an empty band under the data so the annotation clears every point
+    # even when a wider fallback face is substituted for Arial.
+    bottom, top = ax.get_ylim()
+    ax.set_ylim(bottom - 0.12 * (top - bottom), top)
+    # AD distance is non-negative, so the reserved band carries no tick labels.
+    ax.set_yticks([tick for tick in ax.get_yticks() if 0 <= tick <= top])
+    ax.text(0.98, 0.035, f"Spread–AD Spearman ρ = {rho:.2f}",
             transform=ax.transAxes, ha="right", va="bottom", color=GRAY)
     _tidy(ax)
 
@@ -984,13 +990,16 @@ def figure_03() -> None:
             label=label,
         )
         errorbar.lines[0].set_gid(f"risk-series-{sample}")
-    ax.axvline(0, color=GRAY, ls="--", lw=0.7)
+    # Stop the zero reference short of the bottom strip that carries the
+    # resample note, so a wider fallback face cannot run the note into the line.
+    ax.axvline(0, ymin=0.10, color=GRAY, ls="--", lw=0.7)
     lower = float(risk.loc[risk.signal.isin(signal_order), "ci95_low"].min())
     upper = float(risk.loc[risk.signal.isin(signal_order), "ci95_high"].max())
     ax.set_xlim(min(-0.25, lower - 0.05), max(0.75, upper + 0.05))
     ax.set_yticks(base_y, signal_labels)
     ax.set_xlabel("Spearman ρ with absolute error (95% CI)")
-    ax.set_ylim(-0.42, 2.48)
+    # The lower bound leaves a clear strip for the resample note under any face.
+    ax.set_ylim(-0.52, 2.48)
     ax.text(0.972, 0.018, "4,000 composition-cluster resamples",
             transform=ax.transAxes, ha="right", va="bottom", color=GRAY)
     _tidy(ax)
